@@ -67,83 +67,187 @@ export default function App() {
         minHeight: '100vh',
         display: 'flex',
         flexDirection: 'column',
-        background: 'radial-gradient(circle at top, #1f1140 0, #050816 55%, #02010a 100%)',
+        background: '#060508',
         color: '#f9fafb',
-        padding: '16px',
+        padding: '16px 16px 20px',
         boxSizing: 'border-box',
         fontFamily: `system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif`,
+        position: 'relative',
+        overflow: 'hidden',
       }}
     >
-      <header
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          marginBottom: 16,
-        }}
-      >
-        <div
-          style={{
-            fontWeight: 600,
-            letterSpacing: '0.16em',
-            textTransform: 'uppercase',
-            fontSize: 12,
-            opacity: 0.8,
-          }}
-        >
-          Таролог
-        </div>
-        <div
-          style={{
-            fontSize: 10,
-            opacity: 0.7,
-            textTransform: 'uppercase',
-          }}
-        >
-          {platform === 'telegram' ? 'Telegram Mini App' : 'Web режим'}
-        </div>
-      </header>
-
+      {/* фоновые слои */}
       <div
+        aria-hidden="true"
         style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: 12,
-          padding: 14,
-          borderRadius: 16,
-          background:
-            'linear-gradient(135deg, rgba(212,175,55,0.12), rgba(88,28,135,0.18)) border-box',
-          border: '1px solid rgba(212,175,55,0.45)',
-          boxShadow: '0 18px 40px rgba(0,0,0,0.55)',
+          position: 'absolute',
+          inset: -80,
+          backgroundImage:
+            'radial-gradient(circle at 10% 20%, rgba(180,83,9,0.18) 0, transparent 55%), radial-gradient(circle at 80% 0, rgba(88,28,135,0.22) 0, transparent 55%)',
+          opacity: 0.9,
         }}
-      >
-        <div
+      />
+      <div
+        aria-hidden="true"
+        style={{
+          position: 'absolute',
+          inset: 0,
+          backgroundImage:
+            'radial-gradient(circle at 50% 120%, rgba(15,23,42,0.96), #02010a 65%)',
+          mixBlendMode: 'normal',
+          opacity: 1,
+        }}
+      />
+
+      <div style={{ position: 'relative', zIndex: 1, flex: 1, display: 'flex', flexDirection: 'column' }}>
+        <header
           style={{
-            width: 48,
-            height: 48,
-            borderRadius: 16,
-            background: 'radial-gradient(circle at 30% 0, #fef3c7 0, #78350f 55%, #020617 100%)',
-            overflow: 'hidden',
-            flexShrink: 0,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            marginBottom: 16,
           }}
         >
-          {profile?.photo_url ? (
-            <img
-              src={profile.photo_url}
-              alt="avatar"
-              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-            />
-          ) : null}
-        </div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-          <div style={{ fontSize: 16, fontWeight: 600 }}>{fullName}</div>
-          <div style={{ fontSize: 12, opacity: 0.8 }}>Ранг: {rank}</div>
-        </div>
-      </div>
+          <div
+            style={{
+              fontWeight: 600,
+              letterSpacing: '0.16em',
+              textTransform: 'uppercase',
+              fontSize: 12,
+              opacity: 0.8,
+            }}
+          >
+            Таролог
+          </div>
+          <div
+            style={{
+              fontSize: 10,
+              opacity: 0.7,
+              textTransform: 'uppercase',
+            }}
+          >
+            {platform === 'telegram' ? 'Telegram Mini App' : 'Web режим'}
+          </div>
+        </header>
 
-      <div style={{ marginTop: 16, fontSize: 12, opacity: 0.7 }}>
-        Это базовая кроссплатформенная оболочка. Дальше сюда добавим Bento‑главную, “Карту дня”,
-        энергию и мастеров — всё будет одинаково работать в Telegram Mini App и в вебе.
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 12,
+            padding: 14,
+            borderRadius: 18,
+            background:
+              'linear-gradient(145deg, rgba(15,23,42,0.9), rgba(15,23,42,0.4)) padding-box, linear-gradient(135deg, rgba(212,175,55,0.9), rgba(55,65,81,0.15)) border-box',
+            border: '1px solid transparent',
+            boxShadow:
+              '0 22px 45px rgba(0,0,0,0.85), 0 0 35px rgba(212,175,55,0.3), inset 0 0 0 1px rgba(15,23,42,0.85)',
+          }}
+        >
+          <div
+            style={{
+              width: 48,
+              height: 48,
+              borderRadius: 16,
+              background:
+                'radial-gradient(circle at 30% 0, #fef3c7 0, #7c2d12 55%, #020617 100%)',
+              overflow: 'hidden',
+              flexShrink: 0,
+            }}
+          >
+            {profile?.photo_url ? (
+              <img
+                src={profile.photo_url}
+                alt="avatar"
+                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+              />
+            ) : null}
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+            <div style={{ fontSize: 16, fontWeight: 600 }}>{fullName}</div>
+            <div style={{ fontSize: 12, opacity: 0.8 }}>Ранг: {rank}</div>
+          </div>
+        </div>
+
+        {/* блок раскладов */}
+        <div style={{ marginTop: 18, display: 'flex', flexDirection: 'column', gap: 12 }}>
+          <div style={{ fontSize: 12, letterSpacing: '0.14em', textTransform: 'uppercase', opacity: 0.75 }}>
+            Сделать расклад
+          </div>
+          <div style={{ fontSize: 13, opacity: 0.8, lineHeight: 1.45 }}>
+            Перед раскладом найдите мгновение тишины. Сформулируйте вопрос — и позвольте картам подсветить
+            важные символы вашего пути.
+          </div>
+
+          <div style={{ marginTop: 8, display: 'flex', flexDirection: 'column', gap: 10 }}>
+            {[
+              {
+                title: 'Любовь',
+                description: 'О чувствах, связях и внутренней уязвимости сердца.',
+                color: 'linear-gradient(135deg, #4c1d95, #ec4899)',
+              },
+              {
+                title: 'Будущее',
+                description: 'О вероятных сценариях и перекрёстках судьбы.',
+                color: 'linear-gradient(135deg, #0f766e, #38bdf8)',
+              },
+              {
+                title: 'Карьера',
+                description: 'О выборе пути, возможностях роста и ресурсах.',
+                color: 'linear-gradient(135deg, #854d0e, #facc15)',
+              },
+              {
+                title: 'Да или нет?',
+                description: 'Простой формат для чёткого решения: двигаться вперёд или отпустить.',
+                color: 'linear-gradient(135deg, #1d4ed8, #22d3ee)',
+              },
+            ].map((item) => (
+              <button
+                key={item.title}
+                style={{
+                  border: 'none',
+                  padding: 12,
+                  borderRadius: 18,
+                  textAlign: 'left',
+                  cursor: 'pointer',
+                  background:
+                    'linear-gradient(145deg, rgba(15,23,42,0.98), rgba(15,23,42,0.85)) padding-box, ' +
+                    'linear-gradient(135deg, rgba(148,163,184,0.7), rgba(15,23,42,0.2)) border-box',
+                  borderImageSlice: 1,
+                  borderImageSource:
+                    'linear-gradient(135deg, rgba(148,163,184,0.95), rgba(15,23,42,0.3))',
+                  boxShadow: '0 16px 35px rgba(0,0,0,0.95)',
+                  position: 'relative',
+                  overflow: 'hidden',
+                }}
+              >
+                <div
+                  style={{
+                    position: 'absolute',
+                    inset: 0,
+                    background: item.color,
+                    opacity: 0.22,
+                    mixBlendMode: 'screen',
+                  }}
+                />
+                <div
+                  style={{
+                    position: 'relative',
+                    zIndex: 1,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 4,
+                  }}
+                >
+                  <div style={{ fontSize: 17, fontWeight: 600 }}>{item.title}</div>
+                  <div style={{ fontSize: 12, opacity: 0.85, lineHeight: 1.4 }}>
+                    {item.description}
+                  </div>
+                </div>
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   )
