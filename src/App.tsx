@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import './style.css'
 import { getRandomCard, getRandomSubset, type TarotCard } from './tarotDeck'
+import { YesNoSpread } from './YesNoSpread'
 
 type Platform = 'telegram' | 'web'
 
@@ -11,6 +12,8 @@ type UserProfile = {
 }
 
 type Rank = 'Новичок' | 'Искатель' | 'Провидец' | 'Магистр'
+
+type Screen = 'home' | 'yesNo'
 
 function detectPlatform(): Platform {
   if (typeof window === 'undefined') return 'web'
@@ -28,6 +31,7 @@ function computeRank(level: number): Rank {
 
 export default function App() {
   const [platform] = useState<Platform>(() => detectPlatform())
+  const [screen, setScreen] = useState<Screen>('home')
   const [profile, setProfile] = useState<UserProfile | null>(null)
   const level = 0
   const [cardOfTheDay, setCardOfTheDay] = useState<TarotCard | null>(null)
@@ -91,6 +95,10 @@ export default function App() {
   }, [profile])
 
   const rank = useMemo(() => computeRank(level), [level])
+
+  if (screen === 'yesNo') {
+    return <YesNoSpread onBack={() => setScreen('home')} />
+  }
 
   return (
     <div
@@ -277,10 +285,12 @@ export default function App() {
                 title: 'Да или нет?',
                 description: 'Простой формат для чёткого решения: двигаться вперёд или отпустить.',
                 color: 'linear-gradient(135deg, #1d4ed8, #22d3ee)',
+                onClick: () => setScreen('yesNo' as const),
               },
             ].map((item) => (
               <button
                 key={item.title}
+                onClick={item.onClick}
                 style={{
                   border: 'none',
                   padding: 12,
