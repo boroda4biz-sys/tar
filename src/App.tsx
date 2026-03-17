@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import './style.css'
+import { getRandomCard, getRandomSubset, type TarotCard } from './tarotDeck'
 
 type Platform = 'telegram' | 'web'
 
@@ -29,6 +30,8 @@ export default function App() {
   const [platform] = useState<Platform>(() => detectPlatform())
   const [profile, setProfile] = useState<UserProfile | null>(null)
   const level = 0
+  const [cardOfTheDay, setCardOfTheDay] = useState<TarotCard | null>(null)
+  const [, setYesNoPool] = useState<TarotCard[]>([])
 
   useEffect(() => {
     if (platform === 'telegram') {
@@ -50,6 +53,34 @@ export default function App() {
       // В обычном вебе просто гость
       setProfile(null)
     }
+
+    // карта дня – фиксируем на сутки через localStorage
+    const key = 'tarolog_card_of_the_day'
+    const raw = window.localStorage.getItem(key)
+    const today = new Date().toISOString().slice(0, 10)
+    if (raw) {
+      try {
+        const parsed = JSON.parse(raw) as { date: string; card: TarotCard }
+        if (parsed.date === today) {
+          setCardOfTheDay(parsed.card)
+        } else {
+          const card = getRandomCard()
+          setCardOfTheDay(card)
+          window.localStorage.setItem(key, JSON.stringify({ date: today, card }))
+        }
+      } catch {
+        const card = getRandomCard()
+        setCardOfTheDay(card)
+        window.localStorage.setItem(key, JSON.stringify({ date: today, card }))
+      }
+    } else {
+      const card = getRandomCard()
+      setCardOfTheDay(card)
+      window.localStorage.setItem(key, JSON.stringify({ date: today, card }))
+    }
+
+    // пул для расклада "Да/Нет"
+    setYesNoPool(getRandomSubset(10))
   }, [platform])
 
   const fullName = useMemo(() => {
@@ -168,6 +199,52 @@ export default function App() {
             <div style={{ fontSize: 12, opacity: 0.8 }}>Ранг: {rank}</div>
           </div>
         </div>
+
+        {/* Карта дня */}
+        {cardOfTheDay && (
+          <section
+            style={{
+              marginTop: 8,
+              marginBottom: 12,
+              padding: 14,
+              borderRadius: 20,
+              background:
+                'linear-gradient(145deg, rgba(15,23,42,0.98), rgba(15,23,42,0.92)) padding-box, ' +
+                'linear-gradient(135deg, rgba(250,250,249,0.08), rgba(55,65,81,0.3)) border-box',
+              border: '1px solid transparent',
+              boxShadow: '0 20px 40px rgba(0,0,0,0.9)',
+              display: 'flex',
+              gap: 12,
+            }}
+          >
+            <div
+              style={{
+                width: 80,
+                borderRadius: 18,
+                overflow: 'hidden',
+                boxShadow: '0 0 25px rgba(250,250,249,0.35)',
+                flexShrink: 0,
+              }}
+            >
+              <img
+                src={cardOfTheDay.imageUrl}
+                alt={cardOfTheDay.name}
+                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+              />
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', gap: 6 }}>
+              <div>
+                <div style={{ fontSize: 12, letterSpacing: '0.12em', textTransform: 'uppercase', opacity: 0.7 }}>
+                  Карта дня
+                </div>
+                <div style={{ marginTop: 2, fontSize: 16, fontWeight: 600 }}>{cardOfTheDay.name}</div>
+              </div>
+              <div style={{ fontSize: 12, opacity: 0.8 }}>
+                Обрати внимание на знаки вокруг — сегодня эта энергия особенно чувствуется в событиях и людях.
+              </div>
+            </div>
+          </section>
+        )}
 
         {/* блок раскладов */}
         <div style={{ marginTop: 18, display: 'flex', flexDirection: 'column', gap: 12 }}>
